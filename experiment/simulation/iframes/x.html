@@ -1,0 +1,214 @@
+$(document).ready(function () {
+    $('.btn1').click(function () {
+      $('.items').toggleClass("show");
+      $('ul li').toggleClass("hide");
+    });
+  });  
+ 
+  function googleTranslateElementInit() {
+       new google.translate.TranslateElement({
+       pageLanguage: 'en',
+       autoDisplay: 'true',
+       layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL
+       }, 'google_translate_element');
+       }
+ 
+ <script src='//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'></script>
+
+ 
+ <div class="row mb-3 text-center">
+    <div class="col-xxl-4 themed-grid-col">.col-xxl-4</div>
+    <div class="col-xxl-4 themed-grid-col">.col-xxl-4</div>
+    <div class="col-xxl-4 themed-grid-col">.col-xxl-4</div>
+  </div>
+
+  <div id="draggable" class="ui-widget-content">
+    <p>
+
+        Adjusting the brightness in a scanning electron microscope (SEM) can impact image contrast, resolution, and
+        charging effects. Higher brightness enhances contrast and resolution but can lead to charging and beam
+        damage on non-conductive samples. Careful adjustment is crucial to strike a balance between image quality
+        and sample preservation. Operators should consider the sample's properties and imaging goals when setting
+        SEM brightness.</p>
+    <button id="cutButton">X</button>
+</div>
+
+/* draggable box brightness  */
+
+#draggable {
+	width: 40%;
+    /* height: 150px; */
+    padding: 0.5em;
+    position: absolute;
+	border-radius: 12px;
+    display: none;
+    margin: 1vw 2vw 1vw 1vw;
+    font-size: 1.2vw;
+    font-weight: 500;
+    word-spacing: 0.1vw;
+    z-index: 9999;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5); /* Add a shadow */
+    transition: box-shadow 0.3s, background-color 0.3s; /* Add transitions */
+  }
+
+  #cutButton {
+    position: absolute;
+    top: -1px;
+    width: 5%;
+    right: 0;
+	background-color: rgb(221, 11, 11);
+	font-weight: 600;
+  }
+
+  #draggable:hover {
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.7); /* Increase shadow on hover */
+    /* background-color: #ffcc00; */
+  }
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  // drag box javascript 
+
+$(function() {
+    $("#cutButton").click(function() {
+      $("#draggable").hide();
+    });
+
+    $("#info").click(function() {
+      $("#draggable").show();
+    });
+
+    $("#draggable").draggable();
+  });
+
+  <!--  -->
+  // text to speech function
+function textToSpeech(text) {
+    var available_voices = window.speechSynthesis.getVoices();
+    var english_voice = '';
+    for (var i = 0; i < available_voices.length; i++) {
+        if (available_voices[i].name.includes('Female')) { // Look for a voice with "Female" in its name
+            english_voice = available_voices[i];
+            break;
+        }
+    }
+    if (english_voice === '')
+        english_voice = available_voices[0];
+    var utter = new SpeechSynthesisUtterance();
+    utter.rate = 1.1;
+    utter.pitch = 0.9;
+    utter.text = text;
+    utter.voice = english_voice;
+    window.speechSynthesis.speak(utter);
+}
+if (window.speechSynthesis.getVoices().length == 0) {
+    window.speechSynthesis.addEventListener('voiceschanged', function () {
+        textToSpeech(text);
+    });
+}
+// text to speech fxn end
+
+<!-- brightness -->
+<div class="slider-container">
+
+  <label id="acv">Brightness
+      <span id="info" onclick="showInfo()">ℹ️</span>
+  </label>
+  <input type="range" id="Brightness" min="0" max="100" value="0" oninput="changeBrightness()"
+      disabled>
+</div>
+
+function changeBrightness() {
+  // Get the range input value
+  var brightnessValue = document.getElementById("Brightness").value;
+  
+  // Calculate the brightness value for the image
+  var brightness = brightnessValue / 50; // Divide by 100 to get a value between 0 and 1
+  
+  // Apply the brightness to the image
+  document.getElementById("image").style.filter = "brightness(" + brightness + ")";
+}
+
+<!-- html css js draagabl tem -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Hide the modal by default */
+        #imageModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        /* Style the close button */
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button id="toggleButton">Open Image</button>
+
+    <!-- The modal box -->
+    <div id="imageModal">
+        <span class="close" id="closeButton">&times;</span>
+        <img src="../images/parts/condenser_aperture.png" alt="Image to be displayed">
+    </div>
+
+    <script>
+        // Get references to the button, modal, and close button
+        const toggleButton = document.getElementById('toggleButton');
+        const imageModal = document.getElementById('imageModal');
+        const closeButton = document.getElementById('closeButton');
+
+        // Add a click event listener to the button
+        toggleButton.addEventListener('click', function() {
+            // Display the modal
+            imageModal.style.display = 'block';
+        });
+
+        // Add a click event listener to the close button
+        closeButton.addEventListener('click', function() {
+            // Hide the modal
+            imageModal.style.display = 'none';
+        });
+
+        // Make the modal draggable
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        imageModal.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - imageModal.getBoundingClientRect().left;
+            offsetY = e.clientY - imageModal.getBoundingClientRect().top;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const newX = e.clientX - offsetX;
+                const newY = e.clientY - offsetY;
+                imageModal.style.left = newX + 'px';
+                imageModal.style.top = newY + 'px';
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+    </script>
+</body>
+</html>
+
+<!-- html css js draagabl tem -->
